@@ -1,0 +1,308 @@
+/* ================================================================
+   V4 — МОТИВАЦИЯ: полностью белый экран, крупная цитата по центру
+   Подключён в index.html. Пишем только сюда.
+   ================================================================ */
+
+/* ---------- 1. Белый «безхромный» экран ---------- */
+html:has(body.mot-clean) { background: #FFFFFF; }
+
+body.mot-clean {
+  --mot-bottom: 34px;          /* отступ снизу (хром скрыт) */
+  background: #FFFFFF;
+  max-width: 780px;            /* на десктопе — шире, центрируем широкий экран */
+}
+
+body.mot-clean .content {
+  padding: 0 22px calc(var(--mot-bottom) + env(safe-area-inset-bottom, 0px));
+}
+
+body.mot-clean #tab-motivation .mot-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--mot-bottom) - env(safe-area-inset-bottom, 0px));
+  min-height: calc(100dvh - var(--mot-bottom) - env(safe-area-inset-bottom, 0px));
+  animation: motFade .5s ease both;
+}
+
+/* ---------- 2. Кикер сверху ---------- */
+.mot-kicker {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--muted, #8d7f6f);
+  text-align: center;
+  margin: clamp(28px, 9vh, 84px) auto 0;
+}
+
+.mot-kicker::before {
+  content: "";
+  display: block;
+  width: 30px;
+  height: 1px;
+  background: var(--line, rgba(139, 111, 71, .18));
+  margin: 0 auto 15px;
+}
+
+/* ---------- 3. Цитата — по центру экрана ---------- */
+#tab-motivation .quote-card {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 34px 0 10px;
+  text-align: center;
+  background: none;
+  border: none;
+}
+
+#tab-motivation .quote-text {
+  font-family: var(--serif, Georgia, serif);
+  font-size: clamp(24px, 5.6vw, 30px);
+  line-height: 1.5;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: .005em;
+  color: var(--text, #3E3226);
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  overflow-wrap: break-word;
+}
+
+#tab-motivation .quote-text::before,
+#tab-motivation .quote-text::after {
+  color: var(--muted, #8d7f6f);
+  opacity: .5;
+  font-size: .75em;
+  vertical-align: .08em;
+}
+
+#tab-motivation .quote-text::before { margin-right: .04em; }
+#tab-motivation .quote-text::after { margin-left: .04em; }
+
+/* ---------- 4. Автор: мелкий капслок + тонкая линия ---------- */
+#tab-motivation .quote-author {
+  display: block;
+  max-width: 600px;
+  margin-top: 24px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted, #8d7f6f);
+  text-decoration: none;
+  border-bottom: none;
+  transition: color .2s ease;
+}
+
+#tab-motivation .quote-author:hover,
+#tab-motivation .quote-author:focus-visible { color: var(--acc, #C4693F); }
+
+#tab-motivation .quote-author::before {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--line, rgba(139, 111, 71, .18));
+  margin: 0 auto 15px;
+}
+
+/* ---------- 5. Кнопки: pill, минимализм, не прилипают к краям ---------- */
+#tab-motivation .quote-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+#tab-motivation .quote-actions > * {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+/* основная — «Другая цитата» */
+#tab-motivation #quote-next {
+  background: var(--grad, linear-gradient(135deg, #8B6F47, #A98B63));
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 13px 26px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .10);
+  transition: transform .16s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+#tab-motivation #quote-next:hover { transform: translateY(-1px); filter: brightness(1.03); }
+#tab-motivation #quote-next:active { transform: translateY(0) scale(.97); }
+
+/* тихие: избранное и «назад» */
+#tab-motivation .btn-ghost {
+  background: transparent;
+  border: 1px solid var(--line, rgba(139, 111, 71, .18));
+  color: var(--muted, #8d7f6f);
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-size: 13.5px;
+  font-weight: 500;
+  margin-top: 0;
+  transition: color .2s ease, border-color .2s ease, background .2s ease;
+}
+
+#tab-motivation .btn-ghost:hover { color: var(--text, #3E3226); border-color: var(--muted, #8d7f6f); }
+
+#tab-motivation #quote-fav.on {
+  color: var(--acc, #C4693F);
+  border-color: var(--acc, #C4693F);
+  background: var(--acc-soft, #F3E3D5);
+}
+
+/* «← Назад» — заметная, но спокойная */
+#tab-motivation [data-back] {
+  color: var(--text, #3E3226);
+  border: 1px solid var(--muted, #8d7f6f);
+  border-color: rgba(0, 0, 0, .28);
+  font-weight: 600;
+  padding: 12px 22px;
+}
+
+#tab-motivation [data-back]:hover {
+  background: var(--text, #3E3226);
+  color: #fff;
+  border-color: var(--text, #3E3226);
+}
+
+/* ---------- 6. Избранные — тихий переключатель ---------- */
+#tab-motivation .mot-favs-head {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: fit-content;
+  margin: 28px auto 0;
+  padding: 9px 18px;
+  background: transparent;
+  border: 1px solid var(--line, rgba(139, 111, 71, .18));
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color .2s ease, background .2s ease;
+}
+
+#tab-motivation .mot-favs-head:hover,
+#tab-motivation .mot-favs-head:focus-visible {
+  border-color: var(--muted, #8d7f6f);
+  background: rgba(0, 0, 0, .02);
+}
+
+#tab-motivation .mot-favs-head h3 {
+  margin: 0;
+  font-size: 11.5px;
+}
+
+#tab-motivation .mot-favs-n {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .1em;
+}
+
+#tab-motivation .mot-favs-caret {
+  font-size: 10px;
+  color: var(--muted, #8d7f6f);
+  transition: transform .3s ease;
+}
+
+#tab-motivation .mot-favs-head[aria-expanded="true"] .mot-favs-caret { transform: rotate(180deg); }
+
+/* список */
+#tab-motivation .mot-favs { display: none; }
+
+#tab-motivation .mot-favs.open {
+  display: block;
+  animation: motFade .35s ease both;
+  padding-bottom: 4px;
+}
+
+#tab-motivation .fav-quote {
+  border-top: 1px solid var(--line, rgba(139, 111, 71, .18));
+  padding: 15px 2px 14px;
+  font-family: var(--serif, Georgia, serif);
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--text, #3E3226);
+}
+
+#tab-motivation .fav-quote:first-child { border-top: none; }
+
+#tab-motivation .fav-quote .fa {
+  display: block;
+  margin-top: 8px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted, #8d7f6f);
+}
+
+#tab-motivation #quote-favs a {
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 1px;
+  transition: opacity .2s ease;
+}
+
+#tab-motivation #quote-favs a:hover { opacity: .7; }
+
+#tab-motivation #quote-favs .tiny {
+  text-align: center;
+  padding: 20px 0 6px;
+}
+
+/* ---------- 7. Микроанимации ---------- */
+@keyframes motFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes motQuoteIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+#tab-motivation .quote-card.mot-in #quote-text {
+  animation: motQuoteIn .45s cubic-bezier(.22, .7, .25, 1) both;
+}
+
+#tab-motivation .quote-card.mot-in #quote-author {
+  animation: motQuoteIn .45s .1s cubic-bezier(.22, .7, .25, 1) both;
+}
+
+/* уважаем prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  body.mot-clean *,
+  body.mot-clean *::before,
+  body.mot-clean *::after {
+    animation-duration: .01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+/* ---------- 8. Адаптив ---------- */
+@media (max-width: 400px) {
+  body.mot-clean { --mot-bottom: 30px; }
+  body.mot-clean .content { padding-left: 16px; padding-right: 16px; }
+  #tab-motivation .quote-actions { gap: 8px; }
+  #tab-motivation .btn-ghost { padding: 11px 16px; font-size: 13px; }
+  #tab-motivation #quote-next { padding: 13px 22px; }
+  #tab-motivation .mot-kicker { margin-top: clamp(24px, 7vh, 60px); }
+}

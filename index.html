@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Помощник — упрощаю жизнь</title>
+  <meta name="description" content="Задачи, список покупок, заметки, таймер и калькулятор в одном приложении">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#4f46e5">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Помощник">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <h1>Помощник</h1>
+    <p id="today-date"></p>
+  </header>
+
+  <main class="content">
+
+    <!-- ЗАДАЧИ -->
+    <section class="tab active" id="tab-tasks">
+      <h2>Мои задачи</h2>
+      <form id="task-form" class="input-row">
+        <input type="text" id="task-input" placeholder="Что нужно сделать?" autocomplete="off">
+        <button type="submit" class="btn-primary" aria-label="Добавить">+</button>
+      </form>
+      <ul id="task-list" class="item-list"></ul>
+      <p class="empty-hint" id="task-hint">Пока пусто. Добавьте первую задачу!</p>
+    </section>
+
+    <!-- СПИСОК ПОКУПОК -->
+    <section class="tab" id="tab-shop">
+      <h2>Список покупок</h2>
+      <form id="shop-form" class="input-row">
+        <input type="text" id="shop-input" placeholder="Что купить?" autocomplete="off">
+        <button type="submit" class="btn-primary" aria-label="Добавить">+</button>
+      </form>
+      <ul id="shop-list" class="item-list"></ul>
+      <p class="empty-hint" id="shop-hint">Список пуст — можно ничего не покупать 🙂</p>
+      <button id="shop-clear" class="btn-ghost hidden">Убрать отмеченные</button>
+    </section>
+
+    <!-- ЗАМЕТКИ -->
+    <section class="tab" id="tab-notes">
+      <h2>Быстрые заметки</h2>
+      <textarea id="notes-area" placeholder="Идеи, мысли, номера телефонов…&#10;Текст сохраняется автоматически."></textarea>
+      <p class="save-status" id="notes-status">Сохранено</p>
+    </section>
+
+    <!-- ТАЙМЕР -->
+    <section class="tab" id="tab-timer">
+      <h2>Таймер</h2>
+      <div class="timer-display" id="timer-display">25:00</div>
+      <div class="timer-progress"><div id="timer-bar"></div></div>
+      <div class="timer-presets" id="timer-presets">
+        <button data-min="5" class="chip">5 мин</button>
+        <button data-min="15" class="chip">15 мин</button>
+        <button data-min="25" class="chip active">25 мин</button>
+        <button data-min="45" class="chip">45 мин</button>
+      </div>
+      <div class="timer-controls">
+        <button id="timer-start" class="btn-primary wide">Старт</button>
+        <button id="timer-reset" class="btn-ghost">Сброс</button>
+      </div>
+      <p class="empty-hint">Помогает не отвлекаться: работай, пока таймер идёт.</p>
+    </section>
+
+    <!-- RPG-ИГРА -->
+    <section class="tab" id="tab-rpg">
+      <h2>Тёмное королевство</h2>
+
+      <!-- Герой -->
+      <div class="rpg-card rpg-hero">
+        <div class="rpg-title">
+          <span class="rpg-avatar">🛡️</span>
+          <div class="rpg-id">
+            <div class="rpg-name">Странник</div>
+            <div class="rpg-sub" id="rpg-level">Уровень 1</div>
+          </div>
+          <div class="rpg-gold" id="rpg-gold">🪙 0</div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">HP</span>
+          <div class="bar"><div class="bar-fill hp" id="rpg-hp-bar"></div></div>
+          <span class="bar-text" id="rpg-hp-text">100/100</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">XP</span>
+          <div class="bar"><div class="bar-fill xp" id="rpg-xp-bar"></div></div>
+          <span class="bar-text" id="rpg-xp-text">0/40</span>
+        </div>
+        <div class="rpg-stats" id="rpg-stats"></div>
+      </div>
+
+      <!-- Локации -->
+      <div class="rpg-zones" id="rpg-zones"></div>
+
+      <!-- Бой -->
+      <div class="rpg-card rpg-battle hidden" id="rpg-battle">
+        <div class="rpg-enemy">
+          <div class="rpg-enemy-emoji" id="enemy-emoji">🐺</div>
+          <div class="rpg-enemy-info">
+            <div class="rpg-name" id="enemy-name">Волк</div>
+            <div class="bar-row">
+              <div class="bar"><div class="bar-fill enemy-hp" id="enemy-hp-bar"></div></div>
+              <span class="bar-text" id="enemy-hp-text">30/30</span>
+            </div>
+          </div>
+        </div>
+        <div class="rpg-actions">
+          <button class="rpg-btn" data-act="attack">⚔️ Атака</button>
+          <button class="rpg-btn" data-act="heavy">💥 Сильный удар</button>
+          <button class="rpg-btn" data-act="potion">🧪 Зелье <span id="potion-count"></span></button>
+          <button class="rpg-btn danger" data-act="flee">🏃 Бегство</button>
+        </div>
+      </div>
+
+      <!-- Мир (когда нет боя) -->
+      <div class="rpg-actions" id="rpg-world">
+        <button class="rpg-btn wide" data-world="battle">⚔️ В бой</button>
+        <button class="rpg-btn secondary" data-world="potion">🧪 Купить зелье (20 🪙)</button>
+        <button class="rpg-btn secondary" data-world="weapon">🔨 Ковать оружие</button>
+        <button class="rpg-btn secondary" data-world="armor">🛡️ Ковать броню</button>
+        <button class="rpg-btn secondary" data-world="rest">⛺ Отдых</button>
+      </div>
+
+      <!-- Журнал -->
+      <div class="rpg-log" id="rpg-log"></div>
+
+      <button class="btn-ghost" id="rpg-reset">Начать игру заново</button>
+    </section>
+
+    <!-- КАЛЬКУЛЯТОР -->
+    <section class="tab" id="tab-calc">
+      <h2>Калькулятор</h2>
+      <div class="calc-screen">
+        <div class="calc-previous" id="calc-previous"></div>
+        <div class="calc-current" id="calc-current">0</div>
+      </div>
+      <div class="calc-grid" id="calc-grid">
+        <button class="calc-btn secondary" data-action="clear">C</button>
+        <button class="calc-btn secondary" data-action="backspace">⌫</button>
+        <button class="calc-btn secondary" data-action="percent">%</button>
+        <button class="calc-btn operator" data-op="/">÷</button>
+
+        <button class="calc-btn" data-digit="7">7</button>
+        <button class="calc-btn" data-digit="8">8</button>
+        <button class="calc-btn" data-digit="9">9</button>
+        <button class="calc-btn operator" data-op="*">×</button>
+
+        <button class="calc-btn" data-digit="4">4</button>
+        <button class="calc-btn" data-digit="5">5</button>
+        <button class="calc-btn" data-digit="6">6</button>
+        <button class="calc-btn operator" data-op="-">−</button>
+
+        <button class="calc-btn" data-digit="1">1</button>
+        <button class="calc-btn" data-digit="2">2</button>
+        <button class="calc-btn" data-digit="3">3</button>
+        <button class="calc-btn operator" data-op="+">+</button>
+
+        <button class="calc-btn" data-action="negate">±</button>
+        <button class="calc-btn" data-digit="0">0</button>
+        <button class="calc-btn" data-digit=",">,</button>
+        <button class="calc-btn operator" data-action="equals">=</button>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-tab="tab-tasks">
+      <span class="nav-icon">✓</span><span>Задачи</span>
+    </button>
+    <button class="nav-btn" data-tab="tab-shop">
+      <span class="nav-icon">🛒</span><span>Покупки</span>
+    </button>
+    <button class="nav-btn" data-tab="tab-notes">
+      <span class="nav-icon">📝</span><span>Заметки</span>
+    </button>
+    <button class="nav-btn" data-tab="tab-timer">
+      <span class="nav-icon">⏱</span><span>Таймер</span>
+    </button>
+    <button class="nav-btn" data-tab="tab-calc">
+      <span class="nav-icon">🖩</span><span>Счёт</span>
+    </button>
+    <button class="nav-btn" data-tab="tab-rpg">
+      <span class="nav-icon">⚔️</span><span>Игра</span>
+    </button>
+  </nav>
+
+  <script src="js/app.js"></script>
+  <script src="js/rpg.js"></script>
+</body>
+</html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Трекер привычек — с ИИ</title>
+  <meta name="description" content="Трекер привычек, расписание, планы, заметки, лента и ИИ-помощник">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#8B6F47">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/v4-social.css">
+  <link rel="stylesheet" href="css/v4-chat.css">
+  <link rel="stylesheet" href="css/v4-cycle.css">
+  <link rel="stylesheet" href="css/v4-games.css">
+  <link rel="stylesheet" href="css/v4-motivation.css">
+</head>
+<body data-theme="coffee">
+
+<div id="bg-layer"></div>
+<div id="bg-tint"></div>
+
+<header class="app-header">
+  <button id="hdr-logo" class="logo" title="☕">
+    <svg class="ic" viewBox="0 0 24 24"><path d="M4 8h12v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8z"/><path d="M16 9h2.5a2.5 2.5 0 0 1 0 5H16"/><path d="M7 4.5v1M10.5 4v1.5M14 4.5v1"/></svg>
+  </button>
+  <div class="hdr-text">
+    <div id="hdr-title">Трекер привычек</div>
+    <div id="hdr-sub"></div>
+  </div>
+  <button id="btn-chats" class="hdr-btn" title="Чаты">
+    <svg class="ic" viewBox="0 0 24 24"><path d="M20.5 11.7c0 4.1-3.8 7.4-8.5 7.4a9.7 9.7 0 0 1-2.7-.4L4.5 20.5l1.4-3.6a7 7 0 0 1-2.4-5.2C3.5 7.6 7.3 4.3 12 4.3s8.5 3.3 8.5 7.4z"/></svg>
+    <span class="hdr-dot hidden" id="chats-dot"></span>
+  </button>
+  <button id="btn-rewards" class="hdr-btn" title="Награды">
+    <svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="8.5" width="17" height="12" rx="2"/><path d="M3.5 12.5h17M12 8.5v12"/><path d="M12 8.5S10.5 4 8 4a2.2 2.2 0 0 0 0 4.5M12 8.5S13.5 4 16 4a2.2 2.2 0 0 1 0 4.5"/></svg>
+    <span class="hdr-dot hidden" id="rewards-dot"></span>
+  </button>
+  <button id="btn-help" class="hdr-btn" title="Как пользоваться">
+    <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.7 9.6a2.4 2.4 0 1 1 3.4 2.2c-.8.4-1.1 1-1.1 1.7v.3"/><path d="M12 17.2h.01"/></svg>
+  </button>
+  <button id="btn-account" class="hdr-btn" title="Аккаунт">
+    <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.7"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg>
+  </button>
+</header>
+
+<main class="content" id="content">
+
+  <!-- ================= 1. ТРЕКЕР ================= -->
+  <section class="tab active" id="tab-tracker">
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-num" id="tr-today">0/0</div><div class="stat-label">сегодня</div></div>
+      <div class="stat-card"><div class="stat-num" id="tr-best">0</div><div class="stat-label">лучшая серия</div></div>
+      <div class="stat-card"><div class="stat-num" id="tr-level">1</div><div class="stat-label">уровень</div></div>
+    </div>
+    <div class="section-head">
+      <h2>Мои привычки</h2>
+      <button class="btn-mini" id="btn-add-habit">+ добавить</button>
+    </div>
+    <div id="habit-list"></div>
+    <p class="empty-hint" id="habit-hint">Пока пусто. Нажмите «+ добавить» и начните путь! 🌱</p>
+    <div class="section-head">
+      <h2>Календарь месяца</h2>
+      <div class="mini-nav">
+        <button class="btn-round" id="tg-prev">‹</button>
+        <span class="mini-nav-label" id="tg-label"></span>
+        <button class="btn-round" id="tg-next">›</button>
+      </div>
+    </div>
+    <div class="hgrid card" id="tracker-grid"></div>
+    <p class="tiny" id="tg-hint">Тапните клетку — отмечу день. Цвет = цвет привычки.</p>
+  </section>
+
+  <!-- ================= 2. КАЛЕНДАРЬ ================= -->
+  <section class="tab" id="tab-schedule">
+    <div class="seg wide-seg" id="sched-seg">
+      <button class="active" data-sview="week">Расписание</button>
+      <button data-sview="month">Календарь</button>
+      <button data-sview="cycle">Месячные</button>
+    </div>
+    <div id="sched-monthview" class="hidden">
+      <div class="date-nav">
+        <button class="btn-round" id="mv-prev">‹</button>
+        <div class="date-label" id="mv-label"></div>
+        <button class="btn-round" id="mv-next">›</button>
+      </div>
+      <div class="month-grid card" id="mv-grid"></div>
+      <div class="mv-legend">
+        <span><i class="lg lg-dot"></i>привычки</span>
+        <span><i class="lg lg-txt"></i>дела</span>
+      </div>
+      <p class="tiny">Тапните день — откроется карточка: дела дня и отметки привычек.</p>
+    </div>
+    <div id="sched-weekview">
+      <div class="day-chips" id="sched-days"></div>
+      <div class="diary-head">
+        <span class="d-num">№</span><span class="d-subj">Предмет</span><span class="d-hw">Домашнее задание</span><span class="d-grade">Оценка</span>
+      </div>
+      <div id="sched-list"></div>
+      <button class="btn-ghost wide" id="btn-add-row">+ добавить урок</button>
+      <p class="empty-hint" id="sched-hint">Как в дневнике: номер, предмет, домашка и оценка.</p>
+    </div>
+    <div id="sched-cycleview" class="hidden"></div>
+  </section>
+
+  <!-- ================= 3. ПЛАНЫ НА ДЕНЬ ================= -->
+  <section class="tab" id="tab-plans">
+    <div class="seg wide-seg" id="plan-seg">
+      <button class="active" data-pview="day">День</button>
+      <button data-pview="week">Неделя</button>
+      <button data-pview="notes">Заметки</button>
+    </div>
+    <div id="plan-dayview">
+      <div class="date-nav">
+        <button class="btn-round" id="plan-prev">‹</button>
+        <div class="date-label" id="plan-date-label">Сегодня</div>
+        <button class="btn-round" id="plan-next">›</button>
+        <input type="date" id="plan-date-input" class="date-input">
+      </div>
+      <div class="task-add-box card">
+        <div class="task-add-title">Что нужно сделать?</div>
+        <div class="task-row">
+          <input class="field" id="task-input" placeholder="Например: сделать домашку по алгебре…" maxlength="120">
+          <button class="btn-primary" id="task-add">+ Добавить</button>
+        </div>
+        <div class="grp-chips" id="task-grp-chips"></div>
+      </div>
+      <div class="grp-chips" id="task-filter"></div>
+      <div id="task-list"></div>
+      <div class="section-head"><h3>Заметка к дню</h3><span class="tiny">отдельно от планов</span></div>
+      <div id="daynote-card" class="daynote-card"></div>
+    </div>
+    <div id="plan-weekview" class="hidden"></div>
+  </section>
+
+  <!-- ================= 4. ЗАМЕТКИ ================= -->
+  <section class="tab" id="tab-notes">
+    <div class="seg wide-seg" id="pn-seg2">
+      <button data-pv2="day">День</button>
+      <button data-pv2="week">Неделя</button>
+      <button class="active" data-pv2="notes">Заметки</button>
+    </div>
+    <div id="notes-library">
+      <div class="section-head">
+        <h2>Заметки</h2>
+        <button class="btn-mini" id="btn-add-note">+ Добавить заметку</button>
+      </div>
+      <div class="books" id="notes-grid"></div>
+      <p class="empty-hint" id="notes-hint">Пока нет заметок. Нажмите «Добавить заметку».</p>
+    </div>
+    <div id="notes-book" class="hidden">
+      <button class="back-line" id="note-back">← Все заметки</button>
+      <div class="book-head">
+        <input id="note-title" class="title-input" placeholder="Название заметки">
+      </div>
+      <div class="editor-wrap card" id="note-editor-wrap">
+        <div class="rt-toolbar">
+          <button data-cmd="bold"><b>Ж</b></button>
+          <button data-cmd="italic"><i>К</i></button>
+          <button data-cmd="underline"><u>Ч</u></button>
+          <button data-cmd="strikeThrough"><s>З</s></button>
+          <button data-cmd="insertUnorderedList">•</button>
+          <button data-cmd="insertOrderedList">1.</button>
+          <button data-cmd="hl" data-c="#FDE68A" title="Жёлтая заливка"><i class="hl-dot" style="background:#FDE68A"></i></button>
+          <button data-cmd="hl" data-c="#FBCFE8" title="Розовая заливка"><i class="hl-dot" style="background:#FBCFE8"></i></button>
+          <button data-cmd="hl" data-c="#BBF7D0" title="Зелёная заливка"><i class="hl-dot" style="background:#BBF7D0"></i></button>
+          <button data-cmd="hl" data-c="#BFDBFE" title="Синяя заливка"><i class="hl-dot" style="background:#BFDBFE"></i></button>
+          <button data-cmd="insertPhoto" title="Фото">
+            <svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M4.5 17l4.5-4.5 3.5 3.5 2.5-2.5 4.5 4.5"/></svg>
+          </button>
+          <button data-cmd="insertDraw" title="Рисовать">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/></svg>
+          </button>
+          <button data-cmd="insertVideo" title="Видео">
+            <svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="6" width="12" height="12" rx="2.5"/><path d="M15.5 10.5l5-2.7v8.4l-5-2.7"/></svg>
+          </button>
+        </div>
+        <div class="rt-area" id="note-editor" contenteditable="true" data-ph="Текст заметки… выделяй цветом, вставляй фото и видео"></div>
+        <div class="save-note" id="note-status">сохраняется…</div>
+      </div>
+      <button class="btn-ghost danger" id="btn-del-book">Удалить заметку</button>
+    </div>
+  </section>
+
+  <!-- ================= 5. ЛЕНТА ================= -->
+  <section class="tab" id="tab-feed">
+    <div class="stories" id="stories-row"></div>
+    <div class="feed-tabs">
+      <button class="feed-tab active" data-feed="foryou">Посты</button>
+      <button class="feed-tab" data-feed="clips">Клипы</button>
+      <button class="feed-tab" data-feed="following">Подписки</button>
+    </div>
+    <div class="composer-row" id="composer-row">
+      <input class="field" id="quick-post" placeholder="Опубликовать пост…" maxlength="400">
+      <button class="btn-round" id="qp-photo" title="Добавить фото">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M4.5 17l4.5-4.5 3.5 3.5 2.5-2.5 4.5 4.5"/></svg>
+      </button>
+      <button class="btn-round" id="qp-music" title="Добавить звук с телефона">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M9 17.5V6.5l10-2v11"/><ellipse cx="6.5" cy="17.5" rx="2.5" ry="2"/><ellipse cx="16.5" cy="15.5" rx="2.5" ry="2"/></svg>
+      </button>
+      <button class="btn-round" id="qp-video" title="Добавить видео с телефона">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="6" width="12" height="12" rx="2.5"/><path d="M15.5 10.5l5-2.7v8.4l-5-2.7"/></svg>
+      </button>
+      <button class="btn-round qp-aa" id="qp-style" title="Оформление: шрифт, цвет, музыка">Aa</button>
+      <button class="btn-primary qp-send" id="qp-go" title="Опубликовать">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M4.5 12l15.5-7-7 15.5-2-6.5-6.5-2z"/></svg>
+      </button>
+    </div>
+    <div id="qp-preview" class="hidden"></div>
+    <div id="feed-list"></div>
+    <div id="clips-view" class="hidden"></div>
+    <p class="empty-hint" id="feed-empty">Пока нет записей — будьте первым!</p>
+  </section>
+
+  <!-- ================= 6. ЕЩЁ (меню) ================= -->
+  <section class="tab" id="tab-more">
+    <div class="more-grid">
+      <button class="more-item" data-go="tab-chats"><svg class="ic" viewBox="0 0 24 24"><path d="M20.5 11.7c0 4.1-3.8 7.4-8.5 7.4a9.7 9.7 0 0 1-2.7-.4L4.5 20.5l1.4-3.6a7 7 0 0 1-2.4-5.2C3.5 7.6 7.3 4.3 12 4.3s8.5 3.3 8.5 7.4z"/></svg>Чаты</button>
+      <button class="more-item" data-go="tab-friends"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5a5.7 5.7 0 0 1 11 0"/><path d="M15.5 5.9a3.2 3.2 0 0 1 0 5.6M17.5 14.1a5.7 5.7 0 0 1 3 5.4"/></svg>Друзья</button>
+      <button class="more-item" data-go="tab-challenges"><svg class="ic" viewBox="0 0 24 24"><path d="M7.5 4h9v4.8a4.5 4.5 0 0 1-9 0V4z"/><path d="M7.5 5.5H5a2.5 2.5 0 0 0 2.8 3.4M16.5 5.5H19a2.5 2.5 0 0 1-2.8 3.4M12 13.3V17M8.5 20h7M9.7 17h4.6"/></svg>Челленджи</button>
+      <button class="more-item" data-go="tab-profile"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.7"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg>Профиль</button>
+      <button class="more-item" id="more-games" data-go="tab-games"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10.5" rx="5.2"/><path d="M7.3 10.8v3.2M5.7 12.4h3.2M15.3 11.2h.01M17.6 13.6h.01"/></svg>Игры</button>
+      <button class="more-item" data-go="tab-motivation"><svg class="ic" viewBox="0 0 24 24"><path d="M9.6 18.2h4.8M10.4 21h3.2"/><path d="M12 3.2a6 6 0 0 0-3.5 10.8c.6.5 1 1.4 1 2.3h5c0-.9.4-1.8 1-2.3A6 6 0 0 0 12 3.2z"/></svg>Мотивация</button>
+      <button class="more-item" data-go="tab-settings"><svg class="ic" viewBox="0 0 24 24"><path d="M4 7.5h9M17.5 7.5H20M4 16.5h3.5M12 16.5h8"/><circle cx="15" cy="7.5" r="2.3"/><circle cx="9.7" cy="16.5" r="2.3"/></svg>Настройки</button>
+      <button class="more-item" data-go="tab-account"><svg class="ic" viewBox="0 0 24 24"><circle cx="8" cy="12" r="3.7"/><path d="M11.7 12H21l-1.6 2.2M16.4 12v3"/></svg>Аккаунт</button>
+    </div>
+    <div class="more-card card">
+      <div class="more-card-title"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3.5l1.7 4.3 4.3 1.7-4.3 1.7L12 15.5l-1.7-4.3L6 9.5l4.3-1.7L12 3.5z"/><path d="M18.5 15.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9.9-2.1z"/></svg> ИИ-помощник</div>
+      <p>Твой собеседник, который всегда рядом. Нажми на иконку снизу.</p>
+      <button class="btn-primary" id="more-ai">Открыть чат с ИИ</button>
+    </div>
+  </section>
+
+  <!-- ================= ЧАТЫ ================= -->
+  <section class="tab" id="tab-chats">
+    <div class="section-head">
+      <h2>Чаты</h2>
+      <button class="btn-mini" id="btn-new-group">+ группа</button>
+    </div>
+    <div id="chat-list"></div>
+    <p class="empty-hint" id="chats-hint">Добавьте друзей во вкладке «Друзья» или создайте группу.</p>
+  </section>
+
+  <section class="tab" id="tab-chat">
+    <button class="back-line" data-back="tab-chats">← Чаты</button>
+    <div class="chat-head">
+      <span id="chat-avatar">🙂</span>
+      <div><div class="chat-name" id="chat-name">—</div><div class="chat-status" id="chat-status">онлайн</div></div>
+      <button class="btn-mini hidden" id="chat-bot-toggle" title="Убрать бота из группы">🤖 бот</button>
+      <button class="btn-mini hidden" id="chat-del" title="Удалить группу">✕</button>
+    </div>
+    <div class="msgs" id="chat-msgs"></div>
+    <div id="chat-reply" class="hidden">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M9.5 13.5l4-4M10.5 6.5l1.5-1.5a3.5 3.5 0 0 1 5 5l-2 2"/><path d="M13.5 17.5l-1.5 1.5a3.5 3.5 0 0 1-5-5l2-2"/></svg>
+      <span id="chat-reply-text">Ответ на сообщение</span>
+      <button class="icon-btn" id="chat-reply-cancel">✕</button>
+    </div>
+    <div class="rt-toolbar chat-toolbar">
+      <button data-cmd="bold"><b>Ж</b></button>
+      <button data-cmd="italic"><i>К</i></button>
+      <button data-cmd="underline"><u>Ч</u></button>
+      <button data-cmd="strikeThrough"><s>З</s></button>
+      <button data-cmd="insertUnorderedList">•</button>
+      <button data-cmd="hl" data-c="#FDE68A" title="Жёлтая заливка"><i class="hl-dot" style="background:#FDE68A"></i></button>
+      <button data-cmd="hl" data-c="#FBCFE8" title="Розовая заливка"><i class="hl-dot" style="background:#FBCFE8"></i></button>
+      <button data-cmd="hl" data-c="#BBF7D0" title="Зелёная заливка"><i class="hl-dot" style="background:#BBF7D0"></i></button>
+      <button data-cmd="hl" data-c="#BFDBFE" title="Синяя заливка"><i class="hl-dot" style="background:#BFDBFE"></i></button>
+      <button id="chat-sticker-btn" title="Стикеры и паки">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 0-8 8c1 0 1.5-.7 1.2-1.5-.4-1 .2-2 1.3-2H16a4 4 0 0 0 4-4.5z"/><circle cx="9" cy="10.5" r="1"/><circle cx="15" cy="9.5" r="1"/></svg>
+      </button>
+      <button id="chat-music-btn" title="Музыка с устройства">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M9 17.5V6.5l10-2v11"/><ellipse cx="6.5" cy="17.5" rx="2.5" ry="2"/><ellipse cx="16.5" cy="15.5" rx="2.5" ry="2"/></svg>
+      </button>
+      <button data-cmd="photo" title="Фото">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M4.5 17l4.5-4.5 3.5 3.5 2.5-2.5 4.5 4.5"/></svg>
+      </button>
+      <button data-cmd="draw" title="Рисовать">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/></svg>
+      </button>
+    </div>
+    <div class="chat-input-row">
+      <button class="btn-round mic-btn" id="chat-mic" title="Голосовое (до 5 минут)">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg>
+      </button>
+      <div class="chat-text" id="chat-text" contenteditable="true" data-ph="Сообщение…"></div>
+      <button class="btn-primary send" id="chat-send">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M4.5 12l15.5-7-7 15.5-2-6.5-6.5-2z"/></svg>
+      </button>
+    </div>
+    <div class="rec-overlay hidden" id="rec-overlay">
+      <div class="rec-ring" id="rec-ring"><span id="rec-time">0:00</span></div>
+      <div class="rec-hint">Отпустите — отправить · смахните влево — отмена</div>
+      <button class="btn-ghost danger" id="rec-cancel">Отмена</button>
+    </div>
+  </section>
+
+  <!-- ================= ДРУЗЬЯ ================= -->
+  <section class="tab" id="tab-friends">
+    <button class="back-line" data-back="tab-more">← Назад</button>
+    <h2>Друзья и подписки</h2>
+    <input type="search" id="friends-search" class="field" placeholder="🔍 Поиск по имени…">
+    <div class="section-head"><h3>Заявки</h3></div>
+    <div id="requests-list"></div>
+    <div class="section-head"><h3>Люди</h3></div>
+    <div id="people-list"></div>
+    <div class="section-head"><h3>Мои друзья</h3></div>
+    <div id="myfriends-list"></div>
+    <div class="section-head">
+      <h3>Контакты</h3>
+      <button class="btn-mini" id="btn-import-contacts">Импорт</button>
+    </div>
+    <p class="tiny" id="contacts-hint">Предложенные контакты — как в соцсетях: найдите знакомых по номеру телефона и пишите им.</p>
+    <div id="contacts-list"></div>
+  </section>
+
+  <!-- ================= ПРОФИЛЬ ================= -->
+  <section class="tab" id="tab-profile">
+    <button class="back-line" data-back="tab-more">← Назад</button>
+    <div class="prof-head">
+      <div class="prof-avatar" id="prof-avatar">🙂</div>
+      <div class="prof-counts">
+        <div><b id="prof-posts">0</b><span>записи</span></div>
+        <div><b id="prof-likes">0</b><span>лайки</span></div>
+        <div><b id="prof-following">0</b><span>подписки</span></div>
+        <div><b id="prof-friends">0</b><span>друзья</span></div>
+        <div><b id="prof-followers">0</b><span>подписчики</span></div>
+      </div>
+    </div>
+    <div class="prof-name" id="prof-name">Гость</div>
+    <div class="prof-bio" id="prof-bio">Описание не заполнено</div>
+    <div class="prof-links" id="prof-links"></div>
+    <div class="prof-actions">
+      <button class="btn-primary" id="btn-edit-profile">Редактировать</button>
+      <button class="btn-ghost" id="btn-prof-post">+ Пост</button>
+      <button class="btn-ghost" id="btn-prof-story">+ История</button>
+    </div>
+    <div class="feed-tabs">
+      <button class="feed-tab active" data-ptab="posts">Записи</button>
+      <button class="feed-tab" data-ptab="reposts">Репосты</button>
+      <button class="feed-tab" data-ptab="stories">Истории</button>
+      <button class="feed-tab" data-ptab="liked">Отметки</button>
+    </div>
+    <div class="prof-grid" id="prof-grid"></div>
+  </section>
+
+  <!-- ================= ЧЕЛЛЕНДЖИ ================= -->
+  <section class="tab" id="tab-challenges">
+    <button class="back-line" data-back="tab-more">← Назад</button>
+    <h2>Челленджи</h2>
+    <div class="section-head"><h3>Мои</h3><button class="btn-mini" id="btn-new-challenge">+ свой</button></div>
+    <div id="ch-active"></div>
+    <div class="section-head"><h3>Все челленджи</h3></div>
+    <div id="ch-all"></div>
+  </section>
+
+  <!-- ================= МОТИВАЦИЯ (белый экран + цитата) ================= -->
+  <section class="tab" id="tab-motivation">
+    <div class="mot-wrap">
+      <div class="mot-kicker">Мотивация</div>
+      <div class="quote-card" id="quote-card">
+        <div class="quote-text" id="quote-text"></div>
+        <a class="quote-author" id="quote-author" href="#" target="_blank" rel="noopener"></a>
+      </div>
+      <div class="quote-actions">
+        <button class="btn-primary" id="quote-next">Другая цитата →</button>
+        <button class="btn-ghost" id="quote-fav">☆ В избранное</button>
+        <button class="btn-ghost" data-back="tab-more">← Назад</button>
+      </div>
+      <div class="section-head"><h3>Избранные</h3></div>
+      <div id="quote-favs"></div>
+    </div>
+  </section>
+
+  <!-- ================= ИГРЫ ================= -->
+  <section class="tab" id="tab-games">
+    <button class="back-line" data-back="tab-more">← Назад</button>
+    <h2>Развивающие игры</h2>
+    <div class="games-grid" id="games-grid">
+      <button class="game-card" data-game="memory"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="3.5"/></svg>Память<div class="game-best" id="best-memory"></div></button>
+      <button class="game-card" data-game="reaction"><svg class="ic" viewBox="0 0 24 24"><path d="M13.5 3L5 13.5h5.5L9.5 21 18.5 10H13l.5-7z"/></svg>Реакция<div class="game-best" id="best-reaction"></div></button>
+      <button class="game-card" data-game="math"><svg class="ic" viewBox="0 0 24 24"><path d="M5 8.5h6M8 5.5v6M13.5 16.5h6M14 13.5l5 6M19 13.5l-5 6M13.5 7.5h6"/></svg>Математика<div class="game-best" id="best-math"></div></button>
+      <button class="game-card" data-game="sudoku"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M9.3 4v16M14.6 4v16M4 9.3h16M4 14.6h16"/></svg>Судоку<div class="game-best" id="best-sudoku"></div></button>
+      <button class="game-card" data-game="sea"><svg class="ic" viewBox="0 0 24 24"><path d="M3.5 16.5c1.6 0 1.6 1.4 3.2 1.4s1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4"/><path d="M5.5 14l1.2-4.5h10.6l1.2 4.5M12 9.5V5M9 6.8l3-2.3 3 2.3"/></svg>Морской бой<div class="game-best" id="best-sea"></div></button>
+      <button class="game-card" data-game="words"><svg class="ic" viewBox="0 0 24 24"><path d="M4.5 6.5h15M4.5 11h10M4.5 15.5h12M4.5 20h7"/></svg>Слова<div class="game-best" id="best-words"></div></button>
+      <button class="game-card" data-game="cards"><svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="6" width="11" height="14" rx="2.5"/><path d="M8 4h9.5A2.5 2.5 0 0 1 20 6.5V17"/><path d="M6.8 11h4.4M6.8 14.5h4.4"/></svg>Карточки<div class="game-best" id="best-cards"></div></button>
+      <button class="game-card" data-game="g2048"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><path d="M13.5 16.5h6M16.5 13.5v6"/></svg>2048<div class="game-best" id="best-2048"></div></button>
+    </div>
+    <p class="empty-hint">Память и реакция — с уровнями и усложнением. В «Морском бое» и «Математике» можно играть с другом (пригласить). Карточки — свои колоды для запоминания.</p>
+  </section>
+
+  <!-- ================= НАСТРОЙКИ ================= -->
+  <section class="tab" id="tab-settings">
+    <button class="back-line" data-back="tab-more">← Назад</button>
+    <h2>Настройки</h2>
+    <div class="set-block card">
+      <div class="set-title">🎨 Тема оформления</div>
+      <p class="tiny">Это цвета интерфейса: акценты, кнопки, навигация. Фон-картинка от темы не зависит.</p>
+      <div class="theme-picker" id="theme-picker">
+        <button class="theme-dot" data-theme="coffee" style="--c:#8B6F47" title="Кофейная">☕</button>
+        <button class="theme-dot" data-theme="blue" style="--c:#4A9FD4" title="Голубая">💧</button>
+        <button class="theme-dot" data-theme="pink" style="--c:#E88BB5" title="Розовая">🌸</button>
+        <button class="theme-dot" data-theme="green" style="--c:#5FAE4A" title="Зелёная">🌿</button>
+        <button class="theme-dot" data-theme="violet" style="--c:#9B7ED8" title="Сиреневая">💜</button>
+        <button class="theme-dot" data-theme="rainbow" style="--c:linear-gradient(135deg,#f87171,#fbbf24,#34d399,#60a5fa,#e879f9)" title="Радуга">🌈</button>
+      </div>
+    </div>
+    <div class="set-block card">
+      <div class="set-title">🏔 Фон-пейзаж</div>
+      <p class="tiny">Просто картинка позади — тема при этом остаётся твоей.</p>
+      <div class="bg-picker" id="bg-picker">
+        <button class="bg-chip" data-bg="sunset">Закат</button>
+        <button class="bg-chip" data-bg="forest">Лес</button>
+        <button class="bg-chip" data-bg="sea">Море</button>
+        <button class="bg-chip" data-bg="night">Ночь</button>
+        <button class="bg-chip" data-bg="meadow">Луг</button>
+        <button class="bg-chip" data-bg="aurora">Северное сияние</button>
+        <button class="bg-chip" data-bg="none">Без фона</button>
+      </div>
+      <div class="set-actions">
+        <button class="btn-ghost" id="btn-bg-photo">📷 Своё фото фона</button>
+        <button class="btn-ghost hidden" id="btn-bg-photo-clear">Убрать фото</button>
+      </div>
+    </div>
+    <div class="set-block card">
+      <div class="set-title">ИИ-помощник</div>
+      <div class="seg" id="ai-name-picker">
+        <button data-ainame="Ари">Ари</button>
+        <button data-ainame="Анди">Анди</button>
+      </div>
+      <p class="tiny">Своё имя и аватар бота — в чате ИИ, кнопка «Бот».</p>
+    </div>
+    <div class="set-block card">
+      <div class="set-title">🔔 Уведомления</div>
+      <label class="switch-row"><span>Пуш-напоминания о привычках</span><input type="checkbox" id="set-notif" class="switch"></label>
+      <label class="switch-row"><span>Напоминания о планах дня</span><input type="checkbox" id="set-notif2" class="switch"></label>
+    </div>
+    <div class="set-block card">
+      <div class="set-title">💬 Чаты и приватность</div>
+      <div class="set-row"><span>Кто может писать мне в чат</span></div>
+      <div class="grp-chips" id="set-privacy-chips">
+        <button class="grp-chip" data-priv="all">🌍 Все</button>
+        <button class="grp-chip" data-priv="friends">👥 Только друзья</button>
+        <button class="grp-chip" data-priv="nobody">🔒 Никто</button>
+      </div>
+      <label class="switch-row"><span>Показывать профиль всем</span><input type="checkbox" id="set-public" class="switch" checked></label>
+      <div class="set-row"><span>Заблокировано</span><span id="set-blocked">0</span></div>
+      <button class="btn-ghost" id="btn-block-list">Чёрный список</button>
+      <p class="tiny">Разрешения (камера, микрофон, контакты) приложение запрашивает только когда ты сам нажимаешь соответствующую кнопку.</p>
+    </div>
+    <div class="set-block card">
+      <div class="set-title">💾 Данные</div>
+      <div class="set-actions">
+        <button class="btn-ghost" id="btn-export">Экспорт данных</button>
+        <button class="btn-ghost danger" id="btn-reset">Сбросить всё</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= АККАУНТ ================= -->
+  <section class="tab" id="tab-account">
+    <button class="back-line" data-back="tab-more">← Назад</button>
+    <h2>Аккаунт</h2>
+    <div id="acc-guest">
+      <div class="seg wide-seg" id="acc-tabs">
+        <button class="active" data-acc="login">Вход</button>
+        <button data-acc="reg">Регистрация</button>
+      </div>
+      <div id="acc-login" class="auth-form">
+        <input class="field" id="log-contact" placeholder="Телефон или e-mail">
+        <button class="btn-primary wide" id="btn-do-login">Войти</button>
+        <div class="or">или войти через</div>
+        <div class="providers">
+          <button class="prov" data-prov="Яндекс"><b>Я</b> Яндекс ID</button>
+        </div>
+      </div>
+      <div id="acc-reg" class="auth-form hidden">
+        <input class="field" id="reg-name" placeholder="Имя пользователя">
+        <div class="auth-label">Пол</div>
+        <div class="seg wide-seg" id="reg-gender">
+          <button class="active" data-gender="male">👦 Мужской</button>
+          <button data-gender="female">👧 Женский</button>
+        </div>
+        <input class="field" id="reg-contact" placeholder="Телефон или e-mail">
+        <button class="btn-ghost wide" id="btn-send-code">Получить SMS-код</button>
+        <div class="code-info hidden" id="code-info"></div>
+        <input class="field hidden" id="reg-code" placeholder="Код из SMS" inputmode="numeric">
+        <label class="check-row"><input type="checkbox" id="reg-accept" checked> Согласен(на) с правилами сервиса</label>
+        <button class="btn-primary wide" id="btn-do-reg">Создать аккаунт</button>
+        <div class="or">или зарегистрироваться через</div>
+        <div class="providers">
+          <button class="prov" data-prov="Яндекс"><b>Я</b> Яндекс ID</button>
+        </div>
+      </div>
+    </div>
+    <div id="acc-user" class="hidden">
+      <div class="prof-head">
+        <div class="prof-avatar" id="acc-avatar">🙂</div>
+        <div><div class="prof-name" id="acc-name">—</div><div class="tiny" id="acc-contact"></div></div>
+      </div>
+      <div class="set-actions">
+        <button class="btn-ghost" data-go="tab-profile">Мой профиль</button>
+        <button class="btn-ghost danger" id="btn-logout">Выйти</button>
+      </div>
+      <p class="tiny">Данные аккаунта сохраняются на устройстве. Для синхронизации между устройствами подключается облачное хранилище.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ИИ плавающий кружок -->
+<button id="ai-fab" title="ИИ-помощник">
+  <svg class="ic" viewBox="0 0 24 24"><path d="M12 4l1.8 4.7L18.5 10l-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.3L12 4z"/><path d="M18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2z"/></svg>
+</button>
+
+<div id="ai-panel" class="hidden">
+  <div class="ai-head">
+    <div class="ai-bot-info" id="ai-bot-info" title="Нажмите: имя и аватар бота">
+      <span id="ai-avatar"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4l1.8 4.7L18.5 10l-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.3L12 4z"/></svg></span>
+      <b id="ai-name">Ари</b> <span class="ai-status">онлайн</span>
+    </div>
+    <div>
+      <button class="icon-btn" id="ai-hide" title="Спрятать">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+      </button>
+      <button class="icon-btn" id="ai-close" title="Закрыть">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="ai-msgs" id="ai-msgs"></div>
+  <div class="ai-tools">
+    <button id="ai-photo-btn" title="Сделать из фото стикер или тему">
+      <svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M4.5 17l4.5-4.5 3.5 3.5 2.5-2.5 4.5 4.5"/></svg>
+      Фото
+    </button>
+    <button id="ai-bot-btn" title="Имя и аватар бота">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M12 4l1.8 4.7L18.5 10l-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.3L12 4z"/></svg>
+      Бот
+    </button>
+  </div>
+  <div class="ai-input-row">
+    <input id="ai-input" placeholder="Спроси Ари…" autocomplete="off">
+    <button class="btn-primary send" id="ai-send">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M4.5 12l15.5-7-7 15.5-2-6.5-6.5-2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Модальное окно -->
+<div id="modal" class="hidden">
+  <div id="modal-box"></div>
+</div>
+
+<!-- Рисование -->
+<div id="draw-modal" class="hidden">
+  <div class="draw-box">
+    <div class="draw-head">
+      <b>✏️ Рисование</b>
+      <input type="color" id="draw-color" value="#8B6F47">
+      <input type="range" id="draw-size" min="2" max="30" value="6">
+      <button class="icon-btn" id="draw-clear">🧹</button>
+    </div>
+    <canvas id="draw-canvas" width="640" height="420"></canvas>
+    <div class="draw-actions">
+      <button class="btn-ghost" id="draw-cancel">Отмена</button>
+      <button class="btn-primary" id="draw-save">Вставить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Просмотр истории -->
+<div id="story-view" class="hidden">
+  <div class="story-box">
+    <div class="story-top"><span id="story-author"></span><button class="icon-btn" id="story-close">✕</button></div>
+    <div class="story-content" id="story-content"></div>
+    <div class="story-bar"><div id="story-progress"></div></div>
+  </div>
+</div>
+
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="nav-btn active" data-tab="tab-tracker"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="4.4"/><circle cx="12" cy="12" r=".9" fill="currentColor"/></svg><span class="nav-l">Главная</span></button>
+  <button class="nav-btn" data-tab="tab-schedule"><svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5"/></svg><span class="nav-l">Календарь</span></button>
+  <button class="nav-btn" data-tab="tab-plans"><svg class="ic" viewBox="0 0 24 24"><rect x="4.5" y="3.5" width="15" height="17" rx="2.5"/><path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4"/></svg><span class="nav-l">Планы</span></button>
+  <button class="nav-btn" data-tab="tab-feed"><svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="12" cy="12" r="3.4"/><circle cx="16.8" cy="8.2" r=".9" fill="currentColor"/></svg><span class="nav-l">Лента</span></button>
+  <button class="nav-btn" data-tab="tab-more"><svg class="ic" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="18.5" cy="12" r="1.4" fill="currentColor"/></svg><span class="nav-l">Ещё</span></button>
+</nav>
+
+<div id="toast"></div>
+
+<script src="js/core.js"></script>
+<script src="js/tracker.js"></script>
+<script src="js/schedule.js"></script>
+<script src="js/plans.js"></script>
+<script src="js/notes.js"></script>
+<script src="js/social.js"></script>
+<script src="js/community.js"></script>
+<script src="js/games.js"></script>
+<script src="js/motivation.js"></script>
+<script src="js/ai.js"></script>
+</body>
+</html>

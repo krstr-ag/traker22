@@ -1,0 +1,381 @@
+/* ================================================================
+   V4 — ЗАМЕТКИ: живые листки-страницы и дневниковый редактор.
+   Никаких серых плашек и одинаковых карточек — бумага, линейки,
+   почёрк, разброс стопки. Подключается из js/notes.js.
+   ================================================================ */
+
+/* ============ 1. БИБЛИОТЕКА: поиск + фильтры-чипы ============ */
+#tab-notes #notes-lib-tools { margin: 0 0 16px; }
+
+#tab-notes .nlib-search {
+  display: flex; align-items: center; gap: 9px;
+  background: #FFFDF8; border: 1px solid rgba(58, 46, 36, .13);
+  border-radius: 999px; padding: 9px 17px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .9) inset;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+#tab-notes .nlib-search:focus-within {
+  border-color: rgba(196, 105, 63, .45);
+  box-shadow: 0 6px 16px -12px rgba(58, 46, 36, .6);
+}
+#tab-notes .nlib-search .ic { width: 16px; height: 16px; stroke: #A2907C; }
+#tab-notes .nlib-search input {
+  flex: 1; min-width: 0; border: none; background: none; outline: none;
+  font-family: var(--serif, Georgia, serif); font-size: 14.5px; color: var(--text);
+}
+#tab-notes .nlib-search input::placeholder { color: #AE9D8E; font-style: italic; }
+#tab-notes .nlib-search input::-webkit-search-cancel-button { opacity: .4; }
+
+#tab-notes .nlib-chips {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 11px;
+}
+#tab-notes .nchip {
+  font-family: var(--serif, Georgia, serif); font-size: 12.5px; letter-spacing: .03em;
+  color: #7A6A57; background: transparent;
+  border: 1px solid rgba(58, 46, 36, .17); border-radius: 999px;
+  padding: 6px 14px; cursor: pointer;
+  transition: color .18s ease, border-color .18s ease, transform .18s ease, background .18s ease;
+}
+#tab-notes .nchip:hover { color: #C4693F; border-color: rgba(196, 105, 63, .5); transform: translateY(-1px); }
+#tab-notes .nchip.sel {
+  background: #C4693F; border-color: #C4693F; color: #FFF7EF;
+  box-shadow: 0 6px 14px -10px rgba(196, 105, 63, .9);
+}
+#tab-notes .nlib-count {
+  margin-left: auto; align-self: center;
+  font-size: 11px; font-style: italic; color: #A2907C; letter-spacing: .04em;
+}
+
+/* ============ 2. КАРТОЧКИ ============ */
+#tab-notes .books {
+  grid-template-columns: repeat(auto-fill, minmax(212px, 1fr));
+  gap: 20px 16px; padding: 6px 3px 12px;
+}
+
+#tab-notes .book-card.ncard {
+  display: block; position: relative; overflow: hidden; cursor: pointer;
+  background: #FFFDF8; color: var(--text, #3A2E24);
+  border: 1px solid rgba(58, 46, 36, .13);
+  border-radius: 3px 9px 9px 3px;
+  padding: 20px 18px 15px 24px;
+  min-height: 196px;
+  box-shadow: 0 1px 2px rgba(58, 46, 36, .07), 0 10px 20px -16px rgba(58, 46, 36, .55);
+  transform: rotate(var(--rot, 0deg));
+  transition: transform .26s cubic-bezier(.2, .7, .3, 1), box-shadow .26s ease;
+}
+#tab-notes .book-card.ncard:nth-child(odd) { --rot: -.45deg; }
+#tab-notes .book-card.ncard:nth-child(even) { --rot: .4deg; }
+#tab-notes .book-card.ncard:nth-child(3n) { --rot: -.2deg; }
+#tab-notes .book-card.ncard:hover {
+  transform: rotate(0deg) translateY(-7px);
+  box-shadow: 0 2px 4px rgba(58, 46, 36, .08), 0 22px 34px -22px rgba(58, 46, 36, .6);
+}
+#tab-notes .book-card.ncard:active { transform: rotate(0deg) translateY(-2px); }
+
+/* тонкая линейка корешка — как у сшитого листа */
+#tab-notes .book-card.ncard::before {
+  content: ""; position: absolute; left: 10px; top: 8px; bottom: 8px; width: 1px;
+  background: rgba(58, 46, 36, .12);
+}
+#tab-notes .book-card.ncard::after {
+  content: ""; position: absolute; top: 0; right: 0; left: auto; bottom: auto;
+  width: 54px; height: 54px;
+  background: linear-gradient(225deg, rgba(196, 105, 63, .16) 50%, transparent 50%);
+  opacity: 1; pointer-events: none;
+}
+
+/* полоска-закладка слева — только у заметок дней */
+#tab-notes .ncard-tape {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 7px;
+  background: var(--bc, #7A8B6F);
+  box-shadow: inset -2px 0 4px -2px rgba(0, 0, 0, .35);
+}
+#tab-notes .ncard-kind {
+  margin-left: 4px;
+  font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
+  font-family: var(--serif, Georgia, serif); font-style: normal;
+  color: var(--bc, #7A8B6F); opacity: .85;
+}
+
+/* крупная дата serif */
+#tab-notes .ncard-date {
+  display: flex; align-items: baseline; gap: 7px;
+  font-family: var(--serif, Georgia, serif); color: var(--bc, #C4693F);
+}
+#tab-notes .ncard-date b { font-size: 33px; font-weight: 600; line-height: 1; letter-spacing: -.02em; }
+#tab-notes .ncard-date i { font-size: 13px; font-style: italic; color: #93836F; }
+
+#tab-notes .ncard-title {
+  font-family: var(--serif, Georgia, serif); font-size: 16px; font-weight: 600;
+  line-height: 1.32; margin-top: 12px; color: var(--text);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+#tab-notes .ncard-rule {
+  height: 1px; margin: 9px 0 8px;
+  background: linear-gradient(to right, rgba(58, 46, 36, .22), rgba(58, 46, 36, .04));
+}
+#tab-notes .ncard-text {
+  font-size: 11.5px; line-height: 1.55; color: #8d7f6f;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  font-style: italic;
+}
+#tab-notes .ncard-foot {
+  display: flex; align-items: baseline; gap: 9px; margin-top: 14px;
+  font-size: 10.5px; letter-spacing: .05em; color: #A2907C;
+}
+#tab-notes .ncard-no {
+  font-family: var(--serif, Georgia, serif); font-style: italic;
+  color: var(--bc, #C4693F); opacity: .85;
+}
+#tab-notes .ncard-mood { font-size: 13px; line-height: 1; opacity: .8; }
+#tab-notes .ncard-time { margin-left: auto; font-variant-numeric: tabular-nums; }
+#tab-notes .ncard-star {
+  position: absolute; top: 11px; right: 40px; font-size: 13px; color: #C49A4F;
+}
+
+/* кнопка «⋯» */
+#tab-notes .ncard-dots {
+  position: absolute; top: 9px; right: 7px; width: 30px; height: 26px;
+  display: flex; align-items: center; justify-content: center; gap: 3px;
+  background: none; border: none; border-radius: 9px;
+  cursor: pointer; opacity: .5; padding: 0;
+  transition: opacity .18s ease, background .18s ease;
+}
+#tab-notes .ncard-dots span {
+  width: 3.5px; height: 3.5px; border-radius: 50%; background: #6B5B4B;
+}
+#tab-notes .ncard-dots:hover { opacity: 1; background: rgba(58, 46, 36, .07); }
+
+/* ============ 3. ПУСТОЕ СОСТОЯНИЕ ============ */
+#tab-notes #notes-hint {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  background: #FFFDF8; border: 1px dashed rgba(58, 46, 36, .28);
+  border-radius: 4px 18px 4px 18px; padding: 36px 26px 32px;
+  font-family: var(--serif, Georgia, serif); text-align: center;
+  box-shadow: 0 12px 26px -24px rgba(58, 46, 36, .7);
+}
+#tab-notes #notes-hint b { font-size: 19px; font-weight: 600; color: var(--text); }
+#tab-notes #notes-hint span { font-size: 13.5px; font-style: italic; color: var(--muted, #8A7A6A); }
+#tab-notes #notes-hint .btn-mini { margin-top: 8px; }
+
+/* ============ 4. МЕНЮ «⋯» ============ */
+.note-pop {
+  position: fixed; z-index: 900; min-width: 186px; display: none;
+  background: #FFFDF8; border: 1px solid rgba(58, 46, 36, .16);
+  border-radius: 14px; padding: 6px;
+  box-shadow: 0 18px 40px -20px rgba(58, 46, 36, .75);
+}
+.note-pop.open { display: block; animation: notePopIn .18s ease backwards; }
+.note-pop button {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  background: none; border: none; border-radius: 9px;
+  padding: 9px 13px; font-size: 13.5px; color: var(--text, #3A2E24);
+  font-family: var(--serif, Georgia, serif);
+  transition: background .15s ease, padding-left .15s ease;
+}
+.note-pop button:hover { background: #F4ECDF; padding-left: 17px; }
+.note-pop button.danger { color: #A44A3F; }
+@keyframes notePopIn { from { opacity: 0; transform: translateY(-5px) scale(.98); } to { opacity: 1; transform: none; } }
+
+/* ============ 5. РЕДАКТОР: лист с полями и линейками ============ */
+#tab-notes .book-head { margin: 4px 2px 14px; }
+#tab-notes .book-head .title-input {
+  width: 100%; font-family: var(--serif, Georgia, serif);
+  font-size: clamp(21px, 4.6vw, 27px); font-weight: 600; letter-spacing: -.01em;
+  padding: 4px 2px 9px; border-bottom: 1px solid rgba(58, 46, 36, .16);
+}
+#tab-notes .book-head .title-input::placeholder { color: #B7A99A; font-style: italic; font-weight: 400; }
+
+#tab-notes #note-editor-wrap {
+  position: relative; padding: 18px 16px 14px;
+  box-shadow: 0 2px 5px rgba(58, 46, 36, .05), 0 24px 40px -32px rgba(58, 46, 36, .7);
+}
+#tab-notes #note-editor-wrap.paper-cream { background: #FFFDF8 !important; }
+
+/* шапка-дата */
+#tab-notes .note-datehead { margin: 2px 4px 14px; }
+#tab-notes .ndh-big {
+  font-family: var(--serif, Georgia, serif);
+  font-size: clamp(23px, 5vw, 33px); font-weight: 600;
+  letter-spacing: -.015em; line-height: 1.15; color: var(--text);
+}
+#tab-notes .ndh-sub {
+  display: flex; flex-wrap: wrap; gap: 4px; align-items: baseline;
+  margin-top: 5px; font-size: 11.5px; color: #A2907C; letter-spacing: .05em;
+}
+#tab-notes .ndh-remark {
+  font-family: var(--serif, Georgia, serif); font-style: italic;
+  color: #B08968; letter-spacing: 0;
+}
+#tab-notes .ndh-remark::before { content: "·"; margin: 0 7px; color: #C9B9A6; }
+
+/* выбор бумаги — мелкие штампики */
+#tab-notes #note-editor-wrap .theme-picker-row { margin: 0 0 12px; gap: 6px; }
+#tab-notes #note-editor-wrap .theme-pick {
+  font-family: var(--serif, Georgia, serif); font-size: 11.5px; letter-spacing: .04em;
+  padding: 5px 12px; border-radius: 999px;
+  background: transparent; border-color: rgba(58, 46, 36, .16); color: #8d7f6f;
+}
+#tab-notes #note-editor-wrap .theme-pick:hover { color: #C4693F; border-color: rgba(196, 105, 63, .45); }
+#tab-notes #note-editor-wrap .theme-pick.sel {
+  background: rgba(196, 105, 63, .10); border-color: rgba(196, 105, 63, .5);
+  color: #C4693F; font-weight: 600;
+}
+
+/* сама бумага: поля слева/справа + тонкие линейки + поле тетради */
+#tab-notes #note-editor-wrap .rt-area {
+  min-height: 46vh; max-height: 68vh;
+  font-family: var(--serif, Georgia, serif); font-size: 16.5px; line-height: 30px;
+  margin-top: 14px;
+  padding: 0 26px 34px 50px;
+  border: none; border-radius: 0; box-shadow: none; outline: none;
+  background-color: transparent;
+  background-image:
+    linear-gradient(to right, transparent 0 36px, rgba(196, 105, 63, .32) 36px 37px, transparent 37px),
+    repeating-linear-gradient(to bottom, transparent 0 24px, rgba(58, 46, 36, .10) 24px 25px, transparent 25px 30px);
+  background-position: 0 0, 0 6px;
+  background-repeat: repeat, repeat;
+  background-attachment: scroll, local;
+  word-break: break-word;
+}
+#tab-notes #note-editor-wrap .rt-area:focus { outline: none; }
+#tab-notes #note-editor-wrap .rt-area:empty::before { color: #B3A392; font-style: italic; }
+
+#tab-notes #note-editor-wrap.paper-lined .rt-area {
+  background-color: #FFFDF9;
+  line-height: 32px;
+  background-image:
+    linear-gradient(to right, transparent 0 36px, rgba(164, 74, 63, .3) 36px 37px, transparent 37px),
+    repeating-linear-gradient(to bottom, transparent 0 26px, rgba(58, 46, 36, .16) 26px 27px, transparent 27px 32px);
+  background-position: 0 0, 0 6px;
+}
+#tab-notes #note-editor-wrap.paper-kraft .rt-area {
+  background-color: transparent;
+  background-image:
+    linear-gradient(to right, transparent 0 36px, rgba(120, 74, 44, .3) 36px 37px, transparent 37px),
+    repeating-linear-gradient(to bottom, transparent 0 24px, rgba(74, 54, 34, .13) 24px 25px, transparent 25px 30px);
+  background-position: 0 0, 0 6px;
+}
+#tab-notes #note-editor-wrap.paper-grid .rt-area {
+  background-color: transparent;
+  background-image: linear-gradient(to right, transparent 0 36px, rgba(95, 125, 110, .35) 36px 37px, transparent 37px);
+  background-position: 0 0;
+}
+#tab-notes #note-editor-wrap.paper-dark .rt-area {
+  background-color: transparent;
+  background-image:
+    linear-gradient(to right, transparent 0 36px, rgba(232, 160, 130, .38) 36px 37px, transparent 37px),
+    repeating-linear-gradient(to bottom, transparent 0 24px, rgba(239, 231, 218, .09) 24px 25px, transparent 25px 30px);
+  background-position: 0 0, 0 6px;
+}
+#tab-notes #note-editor-wrap.paper-dark .rt-area:empty::before { color: #8E8375; }
+
+/* текстовые ремарки внутри заметки */
+#tab-notes #note-editor-wrap .rt-area em,
+#tab-notes #note-editor-wrap .rt-area i { color: #8B7A66; }
+#tab-notes #note-editor-wrap .rt-area blockquote {
+  margin: 10px 0; padding: 2px 0 2px 14px;
+  border-left: 2px solid rgba(196, 105, 63, .45);
+  font-style: italic; color: #7C6C5A;
+}
+
+/* ============ 6. ТУЛБАР ============ */
+#tab-notes #note-editor-wrap .rt-toolbar {
+  gap: 7px; padding: 0 2px 12px; margin-bottom: 8px;
+  border-bottom: 1px solid rgba(58, 46, 36, .13);
+}
+#tab-notes #note-editor-wrap .rt-toolbar button.ntb {
+  background: transparent; border: 1px solid transparent; border-radius: 11px;
+  min-width: 34px; height: 34px; padding: 0 8px; color: #6B5B4B;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: transform .2s cubic-bezier(.2, .7, .3, 1), background .2s ease,
+              border-color .2s ease, box-shadow .2s ease, color .2s ease;
+}
+#tab-notes #note-editor-wrap .rt-toolbar button.ntb:hover {
+  transform: translateY(-3px); background: #FFFDF8;
+  border-color: rgba(58, 46, 36, .15); color: #C4693F;
+  box-shadow: 0 8px 14px -10px rgba(58, 46, 36, .8);
+}
+#tab-notes #note-editor-wrap .rt-toolbar button.ntb:active { transform: translateY(0); }
+#tab-notes #note-editor-wrap .rt-toolbar .ic {
+  width: 17px; height: 17px; stroke: currentColor; fill: none;
+  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+}
+/* маркеры — как настоящий фломастер: полупрозрачно, край мягкий */
+#tab-notes #note-editor-wrap .rt-toolbar .hl-dot {
+  width: 17px; height: 11px; border-radius: 3px;
+  transform: skewX(-13deg); border-color: rgba(58, 46, 36, .22);
+}
+
+/* ============ 7. НИЗ ЛИСТА: тихо, курсивом ============ */
+#tab-notes .note-foot {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 14px;
+  margin-top: 12px; padding: 11px 4px 2px;
+  border-top: 1px dashed rgba(58, 46, 36, .16);
+}
+#tab-notes #note-count {
+  font-family: var(--serif, Georgia, serif); font-style: italic;
+  font-size: 11.5px; color: #A2907C; letter-spacing: .04em;
+}
+#tab-notes #note-status {
+  font-family: var(--serif, Georgia, serif); font-style: italic;
+  font-size: 11.5px; color: #A2907C; letter-spacing: .05em;
+  text-align: right; background: none; padding: 0;
+}
+#tab-notes #btn-del-book {
+  margin-top: 4px; font-size: 13px;
+  color: #A44A3F; border-color: rgba(164, 74, 63, .3); background: transparent;
+}
+
+/* ============ 8. ВЫДЕЛЕНИЕ-МАРКЕР + БУКВИЦА ============ */
+#tab-notes #note-editor .mk {
+  border-radius: 5px; padding: 1px 2px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+#tab-notes #note-editor .hl-y { background: rgba(253, 230, 138, .5); }
+#tab-notes #note-editor .hl-p { background: rgba(251, 207, 232, .5); }
+#tab-notes #note-editor .hl-g { background: rgba(187, 247, 208, .5); }
+#tab-notes #note-editor .hl-b { background: rgba(191, 219, 254, .5); }
+
+@media (min-width: 760px) {
+  #tab-notes #note-editor::first-letter,
+  #tab-notes #note-editor > p:first-child::first-letter,
+  #tab-notes #note-editor > div:not([class]):first-child::first-letter {
+    font-family: var(--serif, Georgia, serif);
+    font-size: 3em; line-height: .82; font-weight: 600;
+    float: left; color: #C4693F;
+    padding: 4px 9px 0 0; margin: 3px 7px 0 0;
+  }
+}
+
+/* ============ 9. АНИМАЦИИ ============ */
+@keyframes noteSheetIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes noteToolIn {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes noteLibIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+#tab-notes #notes-book.note-anim { animation: noteSheetIn .35s cubic-bezier(.22, .75, .3, 1) backwards; }
+#tab-notes #notes-book.note-anim .rt-toolbar button {
+  animation: noteToolIn .3s ease backwards;
+  animation-delay: calc(140ms + var(--ti, 0) * 40ms);
+}
+#tab-notes #notes-library.lib-anim { animation: noteLibIn .3s ease backwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  #tab-notes #notes-book.note-anim,
+  #tab-notes #notes-book.note-anim .rt-toolbar button,
+  #tab-notes #notes-library.lib-anim,
+  .note-pop.open { animation: none !important; }
+  #tab-notes .book-card.ncard,
+  #tab-notes .nchip,
+  #tab-notes #note-editor-wrap .rt-toolbar button.ntb { transition: none !important; }
+  #tab-notes .book-card.ncard:hover { transform: rotate(var(--rot, 0deg)); }
+}

@@ -1,0 +1,336 @@
+/* ================================================================
+   V4 — МЕСЯЧНЫЕ / ЦИКЛ: женский календарь в эстетике «Мой календарь»
+   Кремовый #F7F1E7 · карточки #FFFDF8 · текст #3A2E24
+   терракота #C4693F · шалфей #7A8B6F · розовый #E1827E · золото #E8B84B
+   ================================================================ */
+
+#sched-cycleview { padding-bottom: 6px; }
+#sched-cycleview .card { box-shadow: 0 1px 3px rgba(58,46,36,.05); }
+
+/* ---------------- 1. Заголовок-карточка ---------------- */
+.cy-hero {
+  padding: 16px 16px 17px; margin-bottom: 11px; border-radius: 22px;
+  background: linear-gradient(165deg, #FFFDF8 0%, #FBF4EA 100%);
+}
+.cy-eyebrow {
+  font-size: 9.5px; letter-spacing: .22em; text-transform: uppercase;
+  color: #9C8B78; font-weight: 700;
+}
+.cy-hero-title {
+  font-family: var(--serif, Georgia, serif); font-size: 21px; line-height: 1.25;
+  color: #3A2E24; margin-top: 5px;
+}
+.cy-hero-title b { color: #C4693F; font-weight: 600; }
+.cy-hero-sub { font-size: 12.5px; color: #7A8B6F; font-weight: 700; margin-top: 5px; letter-spacing: .02em; }
+.cy-hero-line { height: 1px; background: rgba(58,46,36,.1); margin: 13px 0 12px; }
+.cy-big { font-family: var(--serif, Georgia, serif); font-size: 24px; line-height: 1.2; color: #3A2E24; }
+.cy-big-sub { font-size: 13px; color: #9C8B78; margin-top: 5px; }
+.cy-cta {
+  display: block; width: 100%; margin-top: 13px; padding: 12px 14px;
+  border: none; border-radius: 99px; background: #C4693F; color: #FFFDF8;
+  font-size: 14px; font-weight: 700; letter-spacing: .02em; cursor: pointer;
+  box-shadow: 0 3px 10px rgba(196,105,63,.26);
+}
+.cy-cta:active { transform: translateY(1px); }
+.cy-hint { font-size: 11.5px; color: #9C8B78; margin-top: 9px; line-height: 1.45; }
+
+/* ---------------- 2. Таймлайн цикла ---------------- */
+.cy-tl {
+  position: relative; padding: 24px 14px 12px; margin-bottom: 11px;
+  background: #FFFDF8; border: 1px solid rgba(58,46,36,.1); border-radius: 20px;
+}
+.cy-tl-track { position: relative; display: flex; gap: 3px; height: 15px; }
+.cy-sg { display: block; height: 100%; border-radius: 99px; }
+.cy-sg.per { background: #E1827E; }
+.cy-sg.fol { background: #EBE4D8; }
+.cy-sg.ovu { background: #F7DB98; display: grid; place-items: center; }
+.cy-sg.ovu i {
+  display: block; width: 9px; height: 9px; border-radius: 50%;
+  background: #E8B84B; box-shadow: 0 0 0 2px rgba(255,253,248,.85);
+}
+.cy-sg.lut { background: #F7DFDC; }
+.cy-tl-mark {
+  position: absolute; top: -6px; bottom: -6px; width: 2px;
+  background: #C4693F; border-radius: 2px; transform: translateX(-50%);
+}
+.cy-tl-mark em {
+  position: absolute; left: 50%; bottom: -3px; transform: translateX(-50%);
+  width: 9px; height: 9px; border-radius: 50%; background: #C4693F;
+  border: 2px solid #FFFDF8; display: block;
+}
+.cy-tl-mark b {
+  position: absolute; left: 50%; top: -16px; transform: translateX(-50%);
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  color: #C4693F; white-space: nowrap; background: #FFFDF8;
+  padding: 1px 6px; border: 1px solid rgba(196,105,63,.35); border-radius: 99px;
+}
+.cy-tl-foot {
+  display: flex; justify-content: space-between; gap: 8px;
+  font-size: 11px; color: #9C8B78; margin-top: 9px;
+}
+
+/* ---------------- 3. Три карточки ---------------- */
+.cy-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 11px; }
+.cy-card { padding: 14px 8px 13px; text-align: center; border-radius: 20px; }
+.cy-ring {
+  width: 74px; height: 74px; border-radius: 50%; margin: 0 auto 9px;
+  display: grid; place-items: center;
+}
+.cy-ring i {
+  width: 57px; height: 57px; border-radius: 50%; background: #FFFDF8;
+  display: grid; place-items: center; font-style: normal;
+  font-family: var(--serif, Georgia, serif); font-size: 25px; color: #3A2E24;
+}
+.cy-card-t {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .1em;
+  color: #9C8B78; font-weight: 700; margin-top: 6px; line-height: 1.3;
+}
+.cy-card-s { font-size: 11px; color: #9C8B78; margin-top: 3px; }
+.cy-card-date { font-family: var(--serif, Georgia, serif); font-size: 18px; color: #3A2E24; }
+.cy-ico {
+  width: 42px; height: 42px; border-radius: 50%; display: grid;
+  place-items: center; margin: 0 auto 8px;
+}
+.cy-ico.rose { background: #FBE4E1; color: #E1827E; }
+.cy-ico.gold { background: #FBF0D6; color: #C29320; }
+.cy-ico .ic { width: 21px; height: 21px; stroke-width: 1.5; }
+
+/* ---------------- Карточка настроения (только чтение) ---------------- */
+.cy-mood { padding: 14px; margin-bottom: 11px; border-radius: 20px; }
+.cy-mood .set-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px; }
+.cy-ro {
+  font-style: normal; font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+  color: #7A8B6F; font-weight: 700; border: 1px solid rgba(122,139,111,.4);
+  border-radius: 99px; padding: 2px 7px;
+}
+.cy-mood-line { display: flex; gap: 11px; align-items: flex-start; }
+.cy-mood-em { font-size: 26px; line-height: 1.1; }
+.cy-mood-k { font-size: 12.5px; color: #6B5B4B; }
+.cy-mood-note { font-size: 13.5px; color: #3A2E24; margin-top: 5px; line-height: 1.45; }
+.cy-ev {
+  background: #FBF6EE; border: 1px solid rgba(58,46,36,.1);
+  border-radius: 13px; padding: 9px 12px; font-size: 13.5px; margin-bottom: 6px;
+}
+
+/* ---------------- 4. Компактный календарь ---------------- */
+.cy-sec-h {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 8px; margin: 16px 0 9px;
+}
+.cy-sec-h b { font-family: var(--serif, Georgia, serif); font-size: 17px; font-weight: 600; color: #3A2E24; }
+.cy-sec-h span { font-size: 11px; color: #9C8B78; letter-spacing: .04em; }
+.cy-nav { margin-bottom: 9px; }
+.cy-nav .date-label { font-size: 17px; }
+
+.cy-grid { padding: 8px; gap: 3px; }
+.cy-grid .mgrid-wd { font-size: 9px; padding-bottom: 3px; }
+.cy-grid .mgrid-cell {
+  height: 36px; aspect-ratio: auto; border-radius: 11px; gap: 0;
+  background: #FBF6EE; border: 1px solid transparent;
+  font-size: 11.5px; color: #3A2E24;
+}
+.cy-grid .mgrid-cell.empty { background: none; }
+.cy-grid .cy-num { display: block; line-height: 1; }
+.cy-grid .f-per { background: #E1827E; color: #FFF6F4; border-color: transparent; }
+.cy-grid .f-spot { background: #F7DFDC; color: #B4514E; }
+.cy-grid .p-per {
+  background: #FBEAE7; color: #C4693F; border: 1.5px dashed #E1827E;
+}
+.cy-grid .f-ovu .cy-num, .cy-grid .p-ovu .cy-num {
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+}
+.cy-grid .f-ovu .cy-num { background: #E8B84B; color: #3A2E24; }
+.cy-grid .p-ovu .cy-num { border: 1.5px solid #E8B84B; color: #A87C12; }
+.cy-grid .mgrid-cell.today {
+  background: #FFF; border-color: #C4693F; color: #C4693F; font-weight: 700;
+  box-shadow: 0 0 0 1px rgba(196,105,63,.35);
+}
+.cy-grid .f-per.today { background: #E1827E; color: #fff; border-color: #9E4030; }
+.cy-grid .p-per.today { background: #FBEAE7; border-color: #C4693F; }
+.cy-grid .mgrid-cell:active { transform: scale(.9); }
+
+.cy-legend {
+  display: flex; flex-wrap: wrap; gap: 7px 14px; justify-content: center;
+  font-size: 11.5px; color: #9C8B78; margin-top: 10px;
+}
+.cy-dot {
+  width: 12px; height: 12px; border-radius: 50%; display: inline-block;
+  margin-right: 5px; vertical-align: -2px;
+}
+.cy-dot.per { background: #E1827E; border-radius: 4px; }
+.cy-dot.pred { background: #FBEAE7; border: 1.5px dashed #E1827E; border-radius: 4px; }
+.cy-dot.ovu { background: #E8B84B; }
+.cy-dot.ovup { background: transparent; border: 1.5px solid #E8B84B; }
+
+/* ---------------- 5. Анализ цикла ---------------- */
+.cy-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cy-stat { position: relative; padding: 14px 12px 13px; border-radius: 20px; overflow: hidden; }
+.cy-stat.rose { background: linear-gradient(165deg, #FFF7F5, #FBE6E3); border-color: rgba(225,130,126,.4); }
+.cy-stat.gold { background: linear-gradient(165deg, #FFFCF2, #FBF0D6); border-color: rgba(232,184,75,.45); }
+.cy-stat-ico {
+  position: absolute; right: 11px; top: 12px; width: 30px; height: 30px;
+  border-radius: 50%; display: grid; place-items: center;
+}
+.cy-stat.rose .cy-stat-ico { background: rgba(225,130,126,.18); color: #D2665F; }
+.cy-stat.gold .cy-stat-ico { background: rgba(232,184,75,.22); color: #B58714; }
+.cy-stat-ico .ic { width: 17px; height: 17px; stroke-width: 1.6; }
+.cy-stat b {
+  display: block; font-family: var(--serif, Georgia, serif);
+  font-size: 32px; line-height: 1; color: #3A2E24;
+}
+.cy-stat i { font-style: normal; font-size: 11.5px; color: #9C8B78; }
+.cy-stat p { font-size: 11.5px; color: #6B5B4B; margin-top: 7px; line-height: 1.35; max-width: 92%; }
+
+.cy-hist-t { margin: 16px 0 4px; }
+.cy-hrow { padding: 9px 0; border-bottom: 1px dashed rgba(58,46,36,.13); }
+.cy-hhead {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 8px; font-size: 12.5px; color: #3A2E24;
+}
+.cy-hhead b { font-family: var(--serif, Georgia, serif); font-size: 16px; color: #C4693F; }
+.cy-hhead em { font-style: normal; font-size: 10px; color: #9C8B78; margin-left: 3px; }
+.cy-hbar {
+  position: relative; height: 13px; margin-top: 6px;
+  background: #F3ECE0; border-radius: 99px; overflow: hidden;
+}
+.cy-hfill { position: absolute; left: 0; top: 0; bottom: 0; background: #EDE2D1; border-radius: 99px; }
+.cy-hper {
+  position: absolute; left: 0; top: 0; bottom: 0; background: #E1827E;
+  border-radius: 99px; color: #FFF6F4; font-size: 9.5px; line-height: 1;
+  display: grid; place-items: center; overflow: hidden; white-space: nowrap;
+}
+.cy-hovu {
+  position: absolute; top: 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%; background: #E8B84B; box-shadow: 0 0 0 2px rgba(255,253,248,.9);
+}
+.cy-more {
+  display: block; width: 100%; margin-top: 11px; padding: 10px;
+  border: 1px solid rgba(58,46,36,.14); border-radius: 99px;
+  background: #FFFDF8; color: #C4693F; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+
+/* ---------------- Настройки ---------------- */
+.cy-set { margin-top: 18px; }
+.cy-set-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cy-set-row .field { margin-top: 5px; padding: 9px 12px; border-radius: 13px; }
+.cy-set-btns { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 10px; }
+.cy-set-btns .btn-ghost { padding: 11px 10px; font-size: 13px; }
+.cy-reset {
+  padding: 11px 13px; border: 1px solid rgba(122,139,111,.45); border-radius: 99px;
+  background: transparent; color: #7A8B6F; font-size: 12.5px; font-weight: 700; cursor: pointer;
+}
+.cy-set-hint { font-size: 11px; color: #9C8B78; margin-top: 9px; line-height: 1.45; }
+
+/* ---------------- 6. Модалка дня ---------------- */
+.cy-mdate {
+  display: flex; align-items: baseline; gap: 9px; margin: 7px 0 11px;
+  font-family: var(--serif, Georgia, serif); font-size: 25px; color: #C4693F;
+}
+.cy-mdate span {
+  font-family: inherit; font-size: 10.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: #9C8B78;
+}
+.cy-mgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 12px; }
+.cy-mgrid > div {
+  background: #FBF6EE; border: 1px solid rgba(58,46,36,.1);
+  border-radius: 15px; padding: 9px 11px;
+}
+.cy-mgrid span {
+  display: block; font-size: 9px; letter-spacing: .13em;
+  text-transform: uppercase; color: #9C8B78; font-weight: 700;
+}
+.cy-mgrid b {
+  display: block; margin-top: 3px; font-weight: 600; color: #3A2E24;
+  font-family: var(--serif, Georgia, serif); font-size: 15.5px; line-height: 1.3;
+}
+#modal-box .cy-mood-line { margin-top: 2px; }
+
+/* ---------------- 7. Шапка: «⚙ Настроить» + прогноз серии ---------------- */
+.cy-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cy-cog {
+  border: 1px solid rgba(196,105,63,.35); background: #FFFDF8; color: #C4693F;
+  border-radius: 99px; padding: 5px 11px; font-size: 11px; font-weight: 700;
+  letter-spacing: .04em; cursor: pointer; white-space: nowrap;
+}
+.cy-cog:active { transform: translateY(1px); }
+.cy-fore {
+  margin-top: 9px; padding: 8px 11px; border-radius: 13px;
+  background: #FBF6EE; border: 1px dashed rgba(196,105,63,.35);
+  font-size: 11.5px; line-height: 1.45; color: #6B5B4B; word-break: break-word;
+}
+.cy-fore em {
+  font-style: normal; font-weight: 700; color: #C4693F;
+  letter-spacing: .03em; text-transform: uppercase; font-size: 9.5px;
+}
+
+/* ---------------- 8. Модалка «Настрой цикл» (онбординг + ⚙) ---------------- */
+.cy-ob-hint {
+  font-size: 12.5px; color: #7A8B6F; line-height: 1.45;
+  margin: -4px 0 15px; padding: 9px 12px; border-radius: 13px;
+  background: #F3F5EF; border: 1px solid rgba(122,139,111,.28);
+}
+.cy-ob-lab {
+  font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase;
+  color: #9C8B78; font-weight: 700; margin: 15px 0 7px;
+}
+.cy-ob-date {
+  width: 100%; padding: 11px 13px; border-radius: 14px;
+  font-family: var(--serif, Georgia, serif); font-size: 16px; color: #3A2E24;
+}
+.cy-ob-stepper {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: #FBF6EE; border: 1px solid rgba(58,46,36,.1);
+  border-radius: 17px; padding: 9px 11px; margin-bottom: 9px;
+}
+.cy-ob-stepper button {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%;
+  border: 1px solid rgba(196,105,63,.4); background: #FFFDF8; color: #C4693F;
+  font-size: 22px; line-height: 1; cursor: pointer;
+}
+.cy-ob-stepper button:active { transform: scale(.93); }
+.cy-ob-num { display: flex; align-items: baseline; gap: 7px; justify-content: center; flex: 1; }
+.cy-ob-num b {
+  font-family: var(--serif, Georgia, serif); font-size: 44px; line-height: 1;
+  font-weight: 600; color: #C4693F; min-width: 62px; text-align: center;
+}
+.cy-ob-num span {
+  font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  color: #9C8B78; font-weight: 700;
+}
+.cy-ob-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cy-ob-chip {
+  min-width: 40px; padding: 8px 9px; border-radius: 99px;
+  border: 1px solid rgba(58,46,36,.16); background: #FFFDF8;
+  color: #6B5B4B; font-size: 13px; font-weight: 700; cursor: pointer;
+  font-family: var(--serif, Georgia, serif);
+}
+.cy-ob-chip.sel {
+  background: #C4693F; border-color: #C4693F; color: #FFFDF8;
+  box-shadow: 0 3px 8px rgba(196,105,63,.25);
+}
+#cy-ob-save { margin-bottom: 0; }
+#cy-ob-skip { margin-top: 0; }
+
+/* ---------------- 9. Прогноз: окно зачатия в сетке ---------------- */
+.cy-grid .p-fert {
+  background: #FDF4DF; color: #A87C12; border: 1px solid rgba(232,184,75,.55);
+}
+.cy-grid .p-fert.today { background: #FDF4DF; border-color: #C4693F; }
+.cy-dot.fert { background: #FDF4DF; border: 1.5px solid #E8B84B; }
+
+/* ---------------- Узкий экран: 1 в ряд ---------------- */
+@media (max-width: 380px) {
+  .cy-cards { grid-template-columns: 1fr; }
+  .cy-card {
+    display: flex; align-items: center; gap: 13px;
+    text-align: left; padding: 12px 14px;
+  }
+  .cy-ring { width: 56px; height: 56px; margin: 0; flex-shrink: 0; }
+  .cy-ring i { width: 44px; height: 44px; font-size: 20px; }
+  .cy-ico { margin: 0; flex-shrink: 0; }
+  .cy-card-t { margin-top: 0; }
+  .cy-stats { grid-template-columns: 1fr; }
+  .cy-ob-num b { font-size: 38px; min-width: 54px; }
+  .cy-ob-stepper button { width: 36px; height: 36px; font-size: 19px; }
+  .cy-ob-chip { min-width: 36px; padding: 7px 8px; font-size: 12.5px; }
+}

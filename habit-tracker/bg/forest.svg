@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="fsky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#cdeee0"/>
+      <stop offset="60%" stop-color="#a8dcc6"/>
+      <stop offset="100%" stop-color="#7fc4a8"/>
+    </linearGradient>
+    <linearGradient id="ray" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fffbe8" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#fffbe8" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#fsky)"/>
+  <g fill="url(#ray)">
+    <polygon points="380,0 520,0 760,900 300,900"/>
+    <polygon points="700,0 800,0 1100,900 760,900" opacity="0.6"/>
+  </g>
+  <g fill="#2f6b4f">
+    <path d="M180 900 L260 420 L340 900 Z"/>
+    <path d="M420 900 L520 340 L620 900 Z" opacity="0.95"/>
+    <path d="M1180 900 L1290 360 L1400 900 Z"/>
+    <path d="M1420 900 L1520 440 L1600 780 L1600 900 Z" opacity="0.9"/>
+  </g>
+  <g fill="#245840">
+    <path d="M0 900 L80 520 L170 900 Z"/>
+    <path d="M620 900 L740 430 L860 900 Z" opacity="0.92"/>
+    <path d="M900 900 L1010 470 L1120 900 Z" opacity="0.85"/>
+  </g>
+  <g fill="#3d7d5c" opacity="0.75">
+    <rect x="250" y="500" width="20" height="400"/>
+    <rect x="512" y="420" width="22" height="480"/>
+    <rect x="1282" y="440" width="22" height="460"/>
+  </g>
+  <rect y="860" width="1600" height="40" fill="#2a6249"/>
+  <g fill="#eafff2" opacity="0.55">
+    <circle cx="300" cy="250" r="4"/><circle cx="640" cy="180" r="3"/>
+    <circle cx="980" cy="260" r="4"/><circle cx="1350" cy="200" r="3"/>
+  </g>
+</svg>
